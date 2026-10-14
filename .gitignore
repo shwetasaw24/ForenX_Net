@@ -1,0 +1,104 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+wheels/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+!.env.template
+.envrc
+secrets/
+credentials/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python tooling and test output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.ipynb_checkpoints/
+.python_history
+.ipython/
+
+# IDE and operating system files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Model checkpoints and generated model files
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.hdf5
+*.keras
+*.safetensors
+*.tflite
+*.joblib
+*.pkl
+*.pickle
+*.model
+*.weights
+checkpoints/
+weights/
+saved_models/
+trained_models/
+model_weights/
+
+# Training and experiment output
+runs/
+mlruns/
+wandb/
+lightning_logs/
+tensorboard/
+
+# Generated results and logs
+outputs/
+predictions/
+predicted_masks/
+segmentation_outputs/
+visualization_outputs/
+inference_outputs/
+generated_reports/
+reports/
+logs/
+log/
+*.log
+
+# Dataset files stay local and are not committed
+/data/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.old
