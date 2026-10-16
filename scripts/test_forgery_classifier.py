@@ -10,7 +10,7 @@ from models.forgery_classifier import (
 def main():
 
     image_path = (
-        "C:\\Users\\Shweeta\\OneDrive\\Documents\\MAJORPROJECT\\ForenXNet\\data\\evaluation\\ai_generated\\b4f0364c-105a-4808-8001-ba863b8ee8b0.png"
+        r"C:\\Users\\Shweeta\\OneDrive\\Documents\\MAJORPROJECT\\ForenXNet\\data\\evaluation\\ai_generated\\b4f0364c-105a-4808-8001-ba863b8ee8b0.png"
     )
 
     print("=" * 70)

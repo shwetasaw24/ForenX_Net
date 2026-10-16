@@ -24,6 +24,9 @@ from services.evidence_fusion import (
     EvidenceFusion
 )
 
+from models.source_camera_classifier import (
+    SourceCameraClassifier
+)
 
 class ForenXNetPipeline:
 
@@ -60,6 +63,19 @@ class ForenXNetPipeline:
         self.tamper_localizer = (
             TamperLocalizer()
         )
+
+        
+        # =====================================================
+        # SOURCE CAMERA IDENTIFICATION
+        # =====================================================
+
+        try:
+            self.source_camera_classifier = SourceCameraClassifier()
+            print("Source Camera Identification initialized.")
+        except Exception as exc:
+            self.source_camera_classifier = None
+            print(f"SCI initialization failed: {exc}")
+
 
         # =====================================================
         # VISUALIZATION
@@ -126,6 +142,60 @@ class ForenXNetPipeline:
         )
 
         # =====================================================
+        # SOURCE CAMERA IDENTIFICATION
+        # =====================================================
+
+        source_camera_result = {
+            "available": False,
+            "status": "SCI_MODULE_NOT_AVAILABLE",
+            "predicted_camera": None,
+            "candidate_camera": None,
+            "confidence": None,
+            "open_set_score": None,
+            "threshold": None,
+            "is_unknown": None,
+        }
+
+        predicted_class = str(
+            classification_result.get(
+                "predicted_class", ""
+            )
+        ).strip().lower()
+
+        # if predicted_class != "real":
+        
+        #     source_camera_result.update({
+        #         "status": "SKIPPED_NON_REAL_CLASS",
+        #         "reason": (
+        #             "SCI is only executed when the forgery "
+        #             "classifier predicts real."
+        #         ),
+        #     })
+
+        # elif self.source_camera_classifier is None:
+        
+        #     source_camera_result.update({
+        #         "status": "SCI_CHECKPOINT_UNAVAILABLE",
+        #     })
+
+        # else:
+        
+        #     try:
+        #         source_camera_result = (
+        #             self.source_camera_classifier.predict(
+        #                 image_path
+        #             )
+        #         )
+
+        #     except Exception as exc:
+        #         # SCI failure must not stop other pipeline modules.
+        #         source_camera_result.update({
+        #             "available": False,
+        #             "status": "SCI_INFERENCE_ERROR",
+        #             "error": str(exc),
+        #         })
+
+        # =====================================================
         # 3. TAMPER LOCALIZATION
         # =====================================================
 
@@ -133,7 +203,70 @@ class ForenXNetPipeline:
             self.tamper_localizer.predict(
                 image_path
             )
+
+            
         )
+
+        
+        # =====================================================
+        # SOURCE CAMERA IDENTIFICATION
+        # =====================================================
+
+        
+
+        predicted_class = str(
+            classification_result.get("predicted_class", "")
+        ).strip().lower()
+
+        source_camera_result = {
+            "available": False,
+            "status": "SCI_MODULE_NOT_AVAILABLE",
+            "predicted_camera": None,
+            "candidate_camera": None,
+            "confidence": None,
+            "open_set_score": None,
+            "threshold": None,
+            "is_unknown": None,
+        }
+
+        if predicted_class == "ai_generated":
+        
+            source_camera_result.update({
+                "status": "SKIPPED_AI_GENERATED",
+                "reason": (
+                    "Source-camera attribution is not applicable "
+                    "to an image classified as AI-generated."
+                ),
+            })
+
+        elif self.source_camera_classifier is None:
+        
+            source_camera_result.update({
+                "status": "SCI_CHECKPOINT_UNAVAILABLE",
+            })
+
+        else:
+        
+            try:
+                source_camera_result = (
+                    self.source_camera_classifier.predict(image_path)
+                )
+
+                # Record that the forgery classifier's prediction
+                # should qualify interpretation of the SCI result.
+                if predicted_class in {"copy_move", "splicing"}:
+                    source_camera_result["interpretation_warning"] = (
+                        "The image was classified as manipulated. "
+                        "Camera attribution may be unreliable because "
+                        "editing can alter or combine camera traces."
+                    )
+
+            except Exception as exc:
+                source_camera_result.update({
+                    "available": False,
+                    "status": "SCI_INFERENCE_ERROR",
+                    "error": str(exc),
+                })
 
         # =====================================================
         # 4. LOCALIZATION STATISTICS
@@ -351,20 +484,8 @@ class ForenXNetPipeline:
             # SOURCE CAMERA
             # -------------------------------------------------
 
-            "source_camera": {
 
-                "available":
-                    False,
-
-                "status":
-                    "SOURCE_CAMERA_MODULE_NOT_AVAILABLE",
-
-                "prediction":
-                    None,
-
-                "confidence":
-                    None
-            }
+            "source_camera": source_camera_result
         }
 
         return result

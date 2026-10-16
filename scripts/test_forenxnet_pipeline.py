@@ -30,7 +30,7 @@ def main():
     # =========================================================
 
     image_path = Path(
-        "C:\\Users\\Shweeta\\OneDrive\\Documents\\MAJORPROJECT\\ForenXNet\\data\\evaluation\\ai_generated\\804ac3c4-d961-4fb1-b8e7-e23edcd535d3.png"
+        "C:\\Users\\Shweeta\\OneDrive\\Documents\\MAJORPROJECT\\ForenXNet\\data\\evaluation\\copy_move\\85f8ac05-dca5-4c0a-ae97-a6a55ca374d2.jpg"
     )
 
 
@@ -251,59 +251,57 @@ def main():
     # 4. SOURCE CAMERA IDENTIFICATION
     # =========================================================
 
-    source_camera = result[
-        "source_camera"
-    ]
+    source_camera = result.get("source_camera") or {}
 
-    print(
-        "\n" + "=" * 75
-    )
+    print("\n" + "=" * 75)
+    print("4. SOURCE CAMERA IDENTIFICATION")
+    print("=" * 75)
 
-    print(
-        "4. SOURCE CAMERA IDENTIFICATION"
-    )
+    print("Available:", source_camera.get("available", False))
+    print("Status:", source_camera.get("status", "UNKNOWN"))
 
-    print(
-        "=" * 75
-    )
+    predicted_camera = source_camera.get("predicted_camera")
+    candidate_camera = source_camera.get("candidate_camera")
 
-    print(
-        "Available:",
-        source_camera[
-            "available"
-        ]
-    )
-
-    print(
-        "Status:",
-        source_camera[
-            "status"
-        ]
-    )
-
-    if source_camera.get(
-        "prediction"
-    ) is not None:
-
+    if predicted_camera:
+        print("Identified camera ID:", predicted_camera)
         print(
-            "Prediction:",
-            source_camera[
-                "prediction"
-            ]
+            "Identified device:",
+            source_camera.get("predicted_device_name", "Name unavailable")
+        )
+    else:
+        print("Identified camera: None")
+
+    if candidate_camera:
+        print("Candidate camera ID:", candidate_camera)
+        print(
+            "Candidate device:",
+            source_camera.get("candidate_device_name", "Name unavailable")
         )
 
-    if source_camera.get(
-        "confidence"
-    ) is not None:
+    confidence = source_camera.get("confidence")
+    open_set_score = source_camera.get("open_set_score")
+    threshold = source_camera.get("threshold")
 
-        print(
-            "Confidence:",
-            format_percentage(
-                source_camera[
-                    "confidence"
-                ]
-            )
-        )
+    if confidence is not None:
+        print("Confidence:", format_percentage(confidence))
+
+    if open_set_score is not None:
+        print("MSP open-set score:", format_percentage(open_set_score))
+
+    if threshold is not None:
+        print("Rejection threshold:", format_percentage(threshold))
+
+    print("Unknown camera:", source_camera.get("is_unknown"))
+
+    if source_camera.get("reason"):
+        print("Reason:", source_camera["reason"])
+
+    if source_camera.get("interpretation_warning"):
+        print("Warning:", source_camera["interpretation_warning"])
+
+    if source_camera.get("error"):
+        print("SCI error:", source_camera["error"])
 
     # =========================================================
     # 5. EVIDENCE FUSION
