@@ -30,7 +30,7 @@ def main():
     # =========================================================
 
     image_path = Path(
-        "C:\\Users\\Shweeta\\OneDrive\\Documents\\MAJORPROJECT\\ForenXNet\\data\\evaluation\\copy_move\\85f8ac05-dca5-4c0a-ae97-a6a55ca374d2.jpg"
+        "C:\\Users\\Shweeta\\OneDrive\\Documents\\MAJORPROJECT\\ForesXNet\\data\\evaluation\\real\\real.JPG"
     )
 
 
